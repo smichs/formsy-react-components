@@ -188,6 +188,7 @@ var ItemListComponent = React.createClass({
             emptyItemError: "You can't add an empty item",
             itemExistsError: "This item already exists",
             maxNumberOfitemsError: "You can't add more items in the list",
+            selectSuggestionError: "Select an item from the suggestion list",
             listStyle: 'common',
             suggestedItems: null
         };
@@ -226,7 +227,6 @@ var ItemListComponent = React.createClass({
         if (this.autoSuggestEnabled && this.state.focusedSuggestedItemIndex !== null && this.state.focusedSuggestedItemIndex >= 0) {
             newItem = this.filteredSuggestedItems[this.state.focusedSuggestedItemIndex];
 
-            this.filteredSuggestedItems = [];
             newState = {
                 focusedSuggestedItemLabel: '',
                 focusedSuggestedItemIndex: null,
@@ -347,13 +347,9 @@ var ItemListComponent = React.createClass({
     },
     handleFocus: function(evt) {
         if (this.autoSuggestEnabled && !this.isDefined(this.state.focusedSuggestedItemIndex)) {
-            console.log('on focus...');
             this.setState({
                 hideSuggestionList: false
             })
-        }
-        else {
-            console.log('on focus:', this.state.focusedSuggestedItemIndex, this.state.focusedSuggestedItemLabel);
         }
     },
     /**
@@ -500,23 +496,24 @@ var ItemListComponent = React.createClass({
 
         return (
             <div className="itemlist-component">
-                <div className="input-group">
-                    <input type="text" className="form-control" ref="txtInput" autoComplete="off"
-                           disabled={this.isElementDisabled()}
-                           onKeyDown={this.handleKeyDown}
-                           onKeyUp={this.handleKeyUp} />
+                <div className="clearfix input-container">
+                    <div className="input-group">
+                        <input type="text" className="form-control" ref="txtInput" autoComplete="off"
+                               disabled={this.isElementDisabled()}
+                               onKeyDown={this.handleKeyDown}
+                               onKeyUp={this.handleKeyUp} />
 
+                        <span className="input-group-addon">
+                            {inputAddon}
+                        </span>
+                    </div>
                     <SuggestedListComponent
                         focusedItem={focusedSuggestedItemLabel}
                         items={this.filteredSuggestedItems}
                         onSelectItem={this.handleSelectSuggestion}/>
 
-                    <span className="input-group-addon">
-                        {inputAddon}
-                    </span>
+                    <div className={errorClassName}>{itemError}</div>
                 </div>
-                <div className={errorClassName}>{itemError}</div>
-
                 <SelectedListComponent
                     items={this.items}
                     listItemType={this.props.listItemType}

@@ -203,6 +203,7 @@ var ItemListComponent = React.createClass({
             emptyItemError: "You can't add an empty item",
             itemExistsError: "This item already exists",
             maxNumberOfitemsError: "You can't add more items in the list",
+            selectSuggestionError: "Select an item from the suggestion list",
             listStyle: 'common',
             suggestedItems: null
         };
@@ -241,7 +242,6 @@ var ItemListComponent = React.createClass({
         if (this.autoSuggestEnabled && this.state.focusedSuggestedItemIndex !== null && this.state.focusedSuggestedItemIndex >= 0) {
             newItem = this.filteredSuggestedItems[this.state.focusedSuggestedItemIndex];
 
-            this.filteredSuggestedItems = [];
             newState = {
                 focusedSuggestedItemLabel: '',
                 focusedSuggestedItemIndex: null,
@@ -359,12 +359,9 @@ var ItemListComponent = React.createClass({
     },
     handleFocus: function handleFocus(evt) {
         if (this.autoSuggestEnabled && !this.isDefined(this.state.focusedSuggestedItemIndex)) {
-            console.log('on focus...');
             this.setState({
                 hideSuggestionList: false
             });
-        } else {
-            console.log('on focus:', this.state.focusedSuggestedItemIndex, this.state.focusedSuggestedItemLabel);
         }
     },
     /**
@@ -513,25 +510,29 @@ var ItemListComponent = React.createClass({
             { className: 'itemlist-component' },
             React.createElement(
                 'div',
-                { className: 'input-group' },
-                React.createElement('input', { type: 'text', className: 'form-control', ref: 'txtInput', autoComplete: 'off',
-                    disabled: this.isElementDisabled(),
-                    onKeyDown: this.handleKeyDown,
-                    onKeyUp: this.handleKeyUp }),
+                { className: 'clearfix input-container' },
+                React.createElement(
+                    'div',
+                    { className: 'input-group' },
+                    React.createElement('input', { type: 'text', className: 'form-control', ref: 'txtInput', autoComplete: 'off',
+                        disabled: this.isElementDisabled(),
+                        onKeyDown: this.handleKeyDown,
+                        onKeyUp: this.handleKeyUp }),
+                    React.createElement(
+                        'span',
+                        { className: 'input-group-addon' },
+                        inputAddon
+                    )
+                ),
                 React.createElement(SuggestedListComponent, {
                     focusedItem: focusedSuggestedItemLabel,
                     items: this.filteredSuggestedItems,
                     onSelectItem: this.handleSelectSuggestion }),
                 React.createElement(
-                    'span',
-                    { className: 'input-group-addon' },
-                    inputAddon
+                    'div',
+                    { className: errorClassName },
+                    itemError
                 )
-            ),
-            React.createElement(
-                'div',
-                { className: errorClassName },
-                itemError
             ),
             React.createElement(SelectedListComponent, {
                 items: this.items,
